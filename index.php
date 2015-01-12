@@ -78,16 +78,21 @@
           </div>
           <button id="start-send" type="submit" class="btn">Submit</button>
         </form>
-        <div id="workspace-container" class="row-fluid">
+          
+        <div id="workspace-container" class="btn-group">
         </div>
+         <div id="project-container" class="btn-group">
+      </div>
       </div>
       <div class="modal-footer">
       </div>
     </div>
     
+    
+    
     <div class="modal fade" id="about-modal">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">Ã—</button>
+        <button type="button" class="close" data-dismiss="modal">×</button>
         <h3>Who made this awesome tool?</h3>
       </div>
       <div class="modal-body">
@@ -107,7 +112,7 @@
     
     <div class="container">
 
-    <h1 class="workspace_caption">Workspace</h1>
+        <h1><span  class="workspace_caption">Workspace</span> &raquo; <span  class="project_caption">Project</span> </h1> 
     <div id="loader-wrapper">
         <button id="workspace-refresh" class="btn">
             <i class="icon-refresh"></i>
@@ -119,7 +124,7 @@
       <table class="att_track_table table table-bordered">
         <thead>
           <tr>
-            <th>Project</th>
+            
             <th>Tasks (assigned to you)</th>
             <th>Estimated Time</th>
             <th>Worked Time</th>

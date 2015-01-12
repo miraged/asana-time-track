@@ -6,12 +6,14 @@ $(function(){
     var apiKeyEditDelete = apiKeyForm.find('#api-key-edit, #api-key-delete, #api-key-refresh');
     var apiKeyInput = apiKeyForm.find('#api-key');
     var workspaceContainer = apiKeyForm.siblings('#workspace-container');
+    var projectContainer = apiKeyForm.siblings('#project-container');
     var apiKeyImg = apiKeyForm.find('.ajax_img');
     var workspace = $('.container').children('#loader-wrapper');
     var workspaceLoader = workspace.find('.ajax_img');
     var workspaceRefresh = workspace.find('#workspace-refresh');
     var modalBackdrop = $('.modal-backdrop');
     var activeWorkspaceId = null;
+    var activeProjectId = null;
     modalInit();
 
     // ##############################################################################################
@@ -43,6 +45,26 @@ $(function(){
                 workspaceContainer.html("Timeout, no response from Server. We're sorry...");
             }
             workspaceContainer.html(msg.responseText);
+            apiKeyImg.fadeOut();
+            }
+        });
+    }
+
+    function projectsAjaxCall() {
+        $.ajax({
+          type: "GET",
+          url: "request.php",
+          data: "apiKey=" + apiKeyInput.val()+"&workspaceId="+activeWorkspaceId,
+          timeout: 30000,
+          success: function( result ) {
+            projectContainer.html(result).fadeIn();
+            apiKeyImg.fadeOut();
+            },
+          error : function( msg, time ) {
+            if(time === 'timeout'){
+                projectContainer.html("Timeout, no response from Server. We're sorry...");
+            }
+            projectContainer.html(msg.responseText);
             apiKeyImg.fadeOut();
             }
         });
@@ -108,28 +130,56 @@ $(function(){
     
     // change workspaces on click (ajaxCall + changing Headlines etc. )
     $('#workspace-container').on('click', '#workspace-container > .workspace', function(){
-        var caption = $(this).find('h3').text();
         activeWorkspaceId = $(this).data('workspace-id');
-        $('#start-modal').modal('hide');
+        var caption = $(this).find('h3').text();
         $('.workspace_caption').show().attr('data-workspace-id', activeWorkspaceId).html(caption);
+        
+        //$('#start-modal').modal('hide');
+        
+        
+        
+        apiKeyImg.fadeIn();
+        projectsAjaxCall();
+        
+    });
+    $('#project-container').on('click', '#project-container > .project', function(){
+        
+        activeProjectId = $(this).data('project-id');
+        var caption = $(this).find('h4').text();
+        $('.project_caption').show().attr('data-project-id', activeProjectId).html(caption);
+        $('#start-modal').modal('hide');
+        
         modalBackdrop.fadeOut();
         $('#start-modal').children('.modal-footer').html('<a href="#" class="btn" data-dismiss="modal">Close</a>');
+    
+        console.log(activeProjectId);
         tasksAjaxCall();
         workspaceLoader.show();
     });
+    
+    
+    
+    
     
     // ##############################################################################################
     // Tasks table & track time
     // ##############################################################################################
     
-    function tasksAjaxCall(projectId){
+    function tasksAjaxCall(){
         // clean tbody
         $('#track-table').show().find('tbody').html('<tr><td colspan="6">One moment please, your assigned tasks are loading...</td></tr>');
+        
+        var ajaxData = { 
+              apiKey : apiKeyInput.val(),
+              workspaceId :  activeWorkspaceId ,
+              projectId : activeProjectId
+          };
+        console.log(ajaxData);
         
         $.ajax({
           type: "GET",
           url: "request.php",
-          data: "apiKey=" + apiKeyInput.val() + "&workspaceId=" + activeWorkspaceId + "&projectId=all",
+          data: ajaxData,
           timeout: 90000,
           success: function( result ) {
               $('#track-table').show().find('tbody').html(result);
@@ -151,6 +201,7 @@ $(function(){
     
     // updates the Taks with the new data in Asana
     function changeTasksAjaxCall(getTaskId, getEstimatedHours, getEstimatedMinutes, newHours, newMinutes, getTaskName){
+		console.log(apiKeyCookie);
         $.ajax({
               type: "GET",
               url: "request.php",
