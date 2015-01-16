@@ -133,7 +133,7 @@ $(function(){
         activeWorkspaceId = $(this).data('workspace-id');
         var caption = $(this).find('h3').text();
         $('.workspace_caption').show().attr('data-workspace-id', activeWorkspaceId).html(caption);
-        
+                document.title = caption;
         //$('#start-modal').modal('hide');
         
         
@@ -147,6 +147,7 @@ $(function(){
         activeProjectId = $(this).data('project-id');
         var caption = $(this).find('h4').text();
         $('.project_caption').show().attr('data-project-id', activeProjectId).html(caption);
+        document.title = caption + ' \u00bb ' + document.title;
         $('#start-modal').modal('hide');
         
         modalBackdrop.fadeOut();
